@@ -1,0 +1,33 @@
+{
+  "run": [],
+  "clean": "public/**/*",
+  "components": {
+    "src": "src/*.coffee",  
+    "dest": "public/js/"
+  },
+  "libs": {
+    "src":  [
+      "bower_components/angular/angular.js"
+    ],
+    "dest": "public/js/"
+  },
+  "views": {
+    "src": "src/index.jade",
+    "dest": "public/"
+  },
+  "css": {
+    "src": "src/assets/css/styles.sass",
+    "dest": "public/css/"
+  },
+  "copy": {
+    "bower_components/bootstrap-sass/assets/fonts/bootstrap/*": "public/fonts/"
+  },
+  "nodemon": {},
+  "browserSync": {
+    "proxy": "localhost:3000",
+    "port": 3001,
+    "files": [
+      "public/**/*"
+    ]
+  }
+}

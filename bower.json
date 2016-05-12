@@ -1,0 +1,22 @@
+{
+  "name": "threenorama",
+  "description": "3D-Tool helps managing creation of panoramas with PTZ-cameras",
+  "main": "index.js",
+  "authors": [
+    "Denis Kruschinski <denis.kruschinski@gmail.com> (http://github.com/kruschid)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ptz",
+    "onvif",
+    "panorama",
+    "three.js"
+  ],
+  "homepage": "https://github.com/kruschid/threenorama",
+  "moduleType": [
+    "node"
+  ],
+  "dependencies": {
+    "victor": "^1.1.0"
+  }
+}

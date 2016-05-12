@@ -1,0 +1,37 @@
+{
+  "name": "threenorama",
+  "version": "0.0.1",
+  "description": "3D-Tool helps managing creation of panoramas with PTZ-cameras",
+  "main": "index.js",
+  "scripts": {
+    "karmaWatch": "karma start test/karma.conf.coffee --auto-watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kruschid/threenorama.git"
+  },
+  "keywords": [
+    "ptz",
+    "onvif",
+    "panorama",
+    "three.js"
+  ],
+  "author": "Denis Kruschinski <denis.kruschinski@gmail.com> (http://github.com/kruschid)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kruschid/threenorama/issues"
+  },
+  "homepage": "https://github.com/kruschid/threenorama#readme",
+  "devDependencies": {
+    "coffee-script": "1.10.0",
+    "gulp": "^3.9.1",
+    "karma": "0.13.22",
+    "karma-mocha": "0.2.2",
+    "karma-chai": "0.1.0",
+    "karma-sinon": "1.0.4",
+    "karma-coffee-preprocessor": "0.3.0",
+    "karma-mocha-reporter": "2.0.2",
+    "karma-phantomjs-launcher": "1.0.0"
+  }
+}
