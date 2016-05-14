@@ -7,7 +7,9 @@
   },
   "libs": {
     "src":  [
-      "bower_components/angular/angular.js"
+      "bower_components/angular/angular.js",
+      "bower_components/fabric.js/dist/fabric.js",
+      "bower_components/victor/build/victor.js"
     ],
     "dest": "public/js/"
   },
@@ -22,12 +24,7 @@
   "copy": {
     "bower_components/bootstrap-sass/assets/fonts/bootstrap/*": "public/fonts/"
   },
-  "nodemon": {},
   "browserSync": {
-    "proxy": "localhost:3000",
-    "port": 3001,
-    "files": [
-      "public/**/*"
-    ]
+    "server": "public/"
   }
 }

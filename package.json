@@ -25,13 +25,14 @@
   "homepage": "https://github.com/kruschid/threenorama#readme",
   "devDependencies": {
     "coffee-script": "1.10.0",
-    "gulp": "^3.9.1",
+    "gcsj": "0.3.1",
+    "gulp": "3.9.1",
     "karma": "0.13.22",
-    "karma-mocha": "0.2.2",
     "karma-chai": "0.1.0",
-    "karma-sinon": "1.0.4",
-    "karma-coffee-preprocessor": "0.3.0",
+    "karma-coffee-preprocessor": "0.3.1",
+    "karma-mocha": "0.2.2",
     "karma-mocha-reporter": "2.0.2",
-    "karma-phantomjs-launcher": "1.0.0"
+    "karma-phantomjs-launcher": "1.0.0",
+    "karma-sinon": "1.0.4"
   }
 }

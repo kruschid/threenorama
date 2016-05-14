@@ -16,5 +16,31 @@ class Sphere
   # @return {Type}
   ###
   rows: (zoom) ->
+    pictureSize = @cameraType.pictureSize(zoom)
+    # count/generate rows
+    countRows = Math.PI/pictureSize.height
+
+
+###*
+# one line in a sphere
+# @memberOf threenorama
+# @namespace SphereLine
+###
+class SphereLine
+  ###*
+  # Constructor-Description
+  ###
+  constructor: (posY, pictureSize, circumference) ->
+
+
+###*
+# one cell in a sphere
+# @memberOf threenorama
+# @namespace SphereCell
+###
+class SphereCell
+  ###*
+  # Constructor-Description
+  ###
+  constructor: (pos, pictureSize) ->
     
-    # count/generate rows     

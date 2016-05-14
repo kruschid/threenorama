@@ -20,7 +20,13 @@ module.exports = (config) ->
 
     # list of files / patterns to load in the browser
     files: [
-      # 'bower_components/angular/angular.js'
+      # libs
+      'src/ptzcameratype.coffee'
+      'src/sphere.coffee'
+      # tests
+      'test/sampleptzcameratype.coffee'
+      'test/ptzcameratype.test.coffee'
+      'test/sphere.test.coffee'
     ]
     # test result reporter
     reporters: ['mocha']
