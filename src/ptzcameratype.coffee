@@ -25,10 +25,10 @@ class PTZCameraType
       @deviceTiltMax
       @deviceZoomMin
       @deviceZoomMax
-      @panFrom 
-      @panTo
-      @tiltFrom
-      @tiltTo
+      @panMin 
+      @panMax
+      @tiltMin
+      @tiltMax
     } = conf
   
   ###*

@@ -19,10 +19,10 @@ class SamplePTZCameraType
     @deviceTiltMax = 0
     @deviceZoomMin = 0
     @deviceZoomMax = 0.083
-    @panFrom = 0 # 0°
-    @panTo = Math.PI*2 # 360°
-    @tiltFrom = Math.PI/2 # 90°
-    @tiltTo = Math.PI # 180°
+    @panMin = 0 # 0°
+    @panMax = Math.PI*2 # 360°
+    @tiltMin= Math.PI/2 # 90°
+    @tiltMax = Math.PI # 180°
     # picture sizes cover full zoom range of 0 to 1
     @pictureSizeList = [
       {width: 0.7448879726520004, height:0.4784203108246571}
