@@ -9,49 +9,59 @@ class Sphere
   # @param {PTZCameraType} cameraType
   # @param {Number} zoom
   ###
-  constructor: (@cameraType, @zoom) ->
-    
-  ###*
-  # returns number of rows
-  # @return {Type}
-  ###
-  rows: ->
-    pictureSize = @cameraType.pictureSize(@zoom)
-    # tilt range
-    tiltRange = @cameraType.tiltMax - @cameraType.tiltMin
-    # count/generate rows
-    countRows = Math.ceil(tiltRange/pictureSize.height)
-    deltaTilt = tiltRange/countRows
-    console.log 'deltaTilt', deltaTilt
-    # for i in [1..countRows] # for each row
-      # calculate circumreference
-      # tilt = @cameraType.tiltMin * i*deltaTilt
-      # circumference = Math.sin(tilt)*panRange
-      # create SphereLine
-      # lines.push(new SphereLine(tilt, pictureSize, circumference))
-    countRows
-
+  constructor: (cameraType, @pictureSize) ->
+    #init params
+    {
+      @panMin 
+      @panMax
+      @tiltMin
+      @tiltMax
+    } = cameraType
+    # compute horizontal circumference
+    @panCircumference = @panMax - @panMin
+    # compute vertical circumference
+    @tiltCircumference = @tiltMax - @tiltMin
+    # count picture-rows 
+    @countRows = Math.ceil(@tiltCircumference/@pictureSize.height)
+    # compute delta 
+    @deltaTilt = @tiltCircumference/@countRows
+    # create rows
+    @rows = []
+    for i in [0..@countRows]
+      tilt = @tiltMin + i*@deltaTilt
+      # create SphereRow
+      @rows.push(new SphereRow(@, tilt))
 
 ###*
 # one line in a sphere
 # @memberOf threenorama
-# @namespace SphereLine
+# @namespace SphereRow
 ###
-class SphereLine
+class SphereRow
   ###*
   # Constructor-Description
+  # @param {PTZCameraType} cameraType
+  # @param {Number} tilt camera tilt in radians
+  # @param {Object} pictureSize width/height in radians
   ###
-  constructor: (tilt, pictureSize, circumference) ->
-
+  constructor: (@sphere, @tilt) ->
+    @circumference = Math.abs(Math.sin(@tilt))*@sphere.panCircumference
+    @countCols = Math.ceil(@circumference/@sphere.pictureSize.width)
+    @deltaPan = @sphere.panCircumference/@countCols
+    # generate cols
+    @cols = []
+    for i in [0..@countCols]
+      pan = @sphere.panMin + i*@deltaPan
+      @cols.push(new SphereCol(@tilt, pan, @sphere.pictureSize))
 
 ###*
 # one cell in a sphere
 # @memberOf threenorama
-# @namespace SphereCell
+# @namespace SphereCol
 ###
-class SphereCell
+class SphereCol
   ###*
   # Constructor-Description
   ###
-  constructor: (pos, pictureSize) ->
+  constructor: (@tilt, @pan, @pictureSize) ->
     
