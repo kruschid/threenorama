@@ -3,7 +3,7 @@
 # @memberOf threenorama.test
 # @namespace SamplePTZCameraType
 ###
-class SamplePTZCameraType
+module.exports = class SamplePTZCameraType
   ###*
   # inits cameratype 
   ###

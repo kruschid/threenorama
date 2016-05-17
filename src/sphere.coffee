@@ -3,7 +3,7 @@
 # @memberOf threenorama
 # @namespace Sphere
 ###
-class Sphere
+module.exports.Sphere = class Sphere
   
   # @var {Number} panMin pan arc start point in radians
   # @var {Number} panMax pan arc end point in radians
@@ -45,7 +45,7 @@ class Sphere
 # @memberOf threenorama
 # @namespace SphereRow
 ###
-class SphereRow
+module.exports.SphereRow =class SphereRow
   ###*
   # Constructor-Description
   # @param {PTZCameraType} cameraType
@@ -76,7 +76,7 @@ class SphereRow
 # @memberOf threenorama
 # @namespace SphereCol
 ###
-class SphereCol
+module.exports.SphereCol = class SphereCol
   ###*
   # Constructor-Description
   ###

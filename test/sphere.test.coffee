@@ -1,3 +1,5 @@
+threenorama = require('../src/sphere.coffee')
+
 chai.should()
 
 fullSphereCamera =
@@ -8,7 +10,7 @@ fullSphereCamera =
 pictureSize =
   width: Math.PI/4    # 45° =>  8*45° = 360°
   height: Math.PI/10  # 18° => 10*18° = 180° 
-sphere = new Sphere(fullSphereCamera, pictureSize)
+sphere = new threenorama.Sphere(fullSphereCamera, pictureSize)
 
 describe 'Sphere', ->    
   it 'panArc should be computed correctly', ->
@@ -28,7 +30,7 @@ describe 'Sphere', ->
   
   it 'rows should only contain SphereRow instances', ->
     for row in sphere.rows
-      row.should.be.instanceOf(SphereRow)
+      row.should.be.instanceOf(threenorama.SphereRow)
   
   it 'each row should have correct tilt', ->
     for row, i in sphere.rows
@@ -68,7 +70,7 @@ describe 'SphereRow', ->
   it 'cols should only contain SphereCol instances', ->
     for row in sphere.rows
       for col in row.cols
-        col.should.be.instanceOf(SphereCol)
+        col.should.be.instanceOf(threenorama.SphereCol)
 
   it 'each col should have correct tilt', ->
     for row, k in sphere.rows

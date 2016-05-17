@@ -1,4 +1,5 @@
 .*
+*.log
 bower_components
 node_modules
-public
+build

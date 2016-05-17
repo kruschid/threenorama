@@ -1,3 +1,6 @@
+SamplePTZCameraType = require('./sampleptzcameratype.coffee')
+PTZCameraType = require('../src/ptzcameratype.coffee')
+
 chai.should()
 
 describe 'PTZCameraType', ->

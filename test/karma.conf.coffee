@@ -4,37 +4,28 @@ module.exports = (config) ->
     basePath: '../'
     
     preprocessors:
-      '**/*.coffee': ['coffee']
- 
-    coffeePreprocessor: 
-      # options passed to the coffee compiler
-      options:
-        bare: true
-        sourceMap: true
-      # transforming the filenames
-      transformPath: (path) ->
-        path.replace(/\.coffee$/, '.js')
+      'test/index.js': ['webpack', 'sourcemap']
+
+  
+    webpack: 
+      devtool: 'inline-source-map'
+      module:
+        loaders: [
+          {test: /\.coffee$/, loader: "coffee"}
+        ]
     
     # frameworks to use
-    frameworks: ['mocha', 'chai', 'sinon']
+    frameworks: ['mocha', 'chai']
 
     # list of files / patterns to load in the browser
     files: [
-      # libs
-      'src/ptzcameratype.coffee'
-      'src/sphere.coffee'
-      # tests
-      'test/sampleptzcameratype.coffee'
-      'test/ptzcameratype.test.coffee'
-      'test/sphere.test.coffee'
+      'test/index.js'
     ]
+          
     # test result reporter
     reporters: ['mocha']
     # enable / disable colors in the output (reporters and logs)
     colors: true
-      
-    # enable / disable watching file and executing tests whenever any file changes
-    # autoWatch: true,
 
     # start these browsers
     browsers: ['PhantomJS']

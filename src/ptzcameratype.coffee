@@ -3,7 +3,7 @@
 # @memberOf threenorama
 # @namespace PTZCamera
 ###
-class PTZCameraType
+module.exports = class PTZCameraType
   ###*
   # Constructor-Description
   # @param {Object} conf Configuration 
@@ -33,6 +33,7 @@ class PTZCameraType
   
   ###*
   # returns picture size for provided zoom factor
+  # source: http://www.vision-doctor.de/optische-grundlagen.html
   # @param {Number} zoom Zoom-facor with valid range of [0,1]
   # @return {Object} size in rad (width/height)
   ###
