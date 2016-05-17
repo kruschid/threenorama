@@ -37,9 +37,12 @@ describe 'Sphere', ->
 describe 'SphereRow', ->
   it 'circumfence should be computed correctly', ->
     for row in sphere.rows
-      row.circumference.should.be.equal(
-        Math.abs(Math.sin(row.tilt))*sphere.panCircumference
-      )
+      if row.tilt <= 0 or row.tilt >= Math.PI
+        row.circumference.should.be.equal(0)
+      else
+        row.circumference.should.be.equal(
+          Math.abs(Math.sin(row.tilt))*sphere.panCircumference
+        )
   
   it 'countCols should be computed correctly', ->
     for row in sphere.rows
@@ -49,9 +52,12 @@ describe 'SphereRow', ->
   
   it 'deltaPan should be computed correctly', ->
     for row in sphere.rows
-      row.deltaPan.should.be.equal(
-        sphere.panCircumference/row.countCols
-      )
+      if row.tilt <= 0 or row.tilt >= Math.PI
+        row.deltaPan.should.be.equal(0)
+      else
+        row.deltaPan.should.be.equal(
+          sphere.panCircumference/row.countCols
+        )
   
   it 'cols should contain correct number of elements', ->
     for row in sphere.rows
@@ -63,13 +69,21 @@ describe 'SphereRow', ->
     for row in sphere.rows
       for col in row.cols
         col.should.be.instanceOf(SphereCol)
+
+  it 'each col should have correct tilt', ->
+    for row, k in sphere.rows
+      for col in row.cols
+        col.tilt.should.be.equal(k*Math.PI/10)
   
   it 'each col should have correct pan', ->
     for row in sphere.rows
-      console.log row.countCols
-      console.log row.deltaPan
       for col, i in row.cols
-        console.log col
-        # col.pan.should.be.equal(
-        #   sphere.panMin + i*col.deltaPan
-        # )
+        col.pan.should.be.equal(
+          sphere.panMin + i*row.deltaPan
+        )
+  
+  it 'each col should have correct pictureSize', ->
+    for row in sphere.rows
+      for col in row.cols
+        col.pictureSize.width.should.be.equal(sphere.pictureSize.width)
+        col.pictureSize.height.should.be.equal(sphere.pictureSize.height)

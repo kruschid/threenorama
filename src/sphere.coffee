@@ -4,6 +4,14 @@
 # @namespace Sphere
 ###
 class Sphere
+  
+  # @var {Number} panMin pan arc start point in radians
+  # @var {Number} panMax pan arc end point in radians
+  # @var {Number} tilMin tilt arc start point in radians
+  # @var {Number} tilMax tilt arc end point in radians
+  # @var {Number} panArc panMin to panMax length in radians
+  # @var {Number} tiltArc tilMin to tiltMax length in radians
+  
   ###*
   # Constructor-Description
   # @param {PTZCameraType} cameraType
@@ -18,15 +26,13 @@ class Sphere
       @tiltMax
     } = cameraType
     # compute horizontal circumference
-    @panCircumference = @panMax - @panMin
-    # compute vertical circumference
-    @tiltCircumference = @tiltMax - @tiltMin
-    # count picture-rows 
-    @countRows = Math.ceil(@tiltCircumference/@pictureSize.height)
-    # compute delta 
-    @deltaTilt = @tiltCircumference/@countRows
+    @panArc = @panMax - @panMin
+    # computrtical circumference
+    @tiltArc iltMax - @tiltMin
+    # count picture-rows  @countRows = Math.ceil(@tiltArc/@pictureSizeght)
+    # compute delta  @deltaTilt = @tiltArc/@countRows
     # create rows
-    @rows = []
+@rows = []
     for i in [0..@countRows]
       tilt = @tiltMin + i*@deltaTilt
       # create SphereRow
@@ -45,14 +51,23 @@ class SphereRow
   # @param {Object} pictureSize width/height in radians
   ###
   constructor: (@sphere, @tilt) ->
-    @circumference = Math.abs(Math.sin(@tilt))*@sphere.panCircumference
-    @countCols = Math.ceil(@circumference/@sphere.pictureSize.width)
-    @deltaPan = @sphere.panCircumference/@countCols
-    # generate cols
-    @cols = []
-    for i in [0..@countCols]
-      pan = @sphere.panMin + i*@deltaPan
-      @cols.push(new SphereCol(@tilt, pan, @sphere.pictureSize))
+    # if top or bottom of sphere 
+    if @tilt <= 0 or @tilt >= Math.PI
+      @circumference = 0
+      @countCols = 0
+      @deltaPan = 0
+      @cols = [
+        new SphereCol(@tilt, 0, @sphere.pictureSize)
+      ]
+    else
+      @circumference = Math.abs(Math.sin(@tilt))*@sphere.panArc
+      @countCols = Math.ceil(@circumference/@sphere.pictureSize.width) 
+      @deltaPan = @sphere.panArc/@countCols
+      # generate cols
+      @cols = []
+      for i in [0..@countCols]
+        pan = @sphere.panMin + i*@deltaPan
+        @cols.push(new SphereCol(@tilt, pan, @sphere.pictureSize))
 
 ###*
 # one cell in a sphere
@@ -64,4 +79,3 @@ class SphereCol
   # Constructor-Description
   ###
   constructor: (@tilt, @pan, @pictureSize) ->
-    
