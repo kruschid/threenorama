@@ -9,8 +9,8 @@ class Sphere
   # @var {Number} panMax pan arc end point in radians
   # @var {Number} tilMin tilt arc start point in radians
   # @var {Number} tilMax tilt arc end point in radians
-  # @var {Number} panArc panMin to panMax length in radians
-  # @var {Number} tiltArc panMin to panMax length in radians
+  # @var {Number} panArc arc length in radians
+  # @var {Number} tiltArc arc length in radians
   
   ###*
   # Constructor-Description
@@ -27,10 +27,12 @@ class Sphere
     } = cameraType
     # compute horizontal circumference
     @panArc = @panMax - @panMin
-    # computrtical circumference
+    # compute vertical circumference
     @tiltArc = @tiltMax - @tiltMin
-    # count picture-rows  @countRows = Math.ceil(@tiltArc/@pictureSize.height)
-    # compute delta  @deltaTilt = @tiltArc/@countRows
+    # count picture-rows 
+    @countRows = Math.ceil(@tiltArc/@pictureSize.height)
+    # compute delta 
+    @deltaTilt = @tiltArc/@countRows
     # create rows
     @rows = []
     for i in [0..@countRows]

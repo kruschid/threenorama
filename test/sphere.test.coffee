@@ -11,11 +11,11 @@ pictureSize =
 sphere = new Sphere(fullSphereCamera, pictureSize)
 
 describe 'Sphere', ->    
-  it 'panCircumference should be computed correctly', ->
-    sphere.panCircumference.should.be.equal(fullSphereCamera.panMax)
+  it 'panArc should be computed correctly', ->
+    sphere.panArc.should.be.equal(fullSphereCamera.panMax)
   
-  it 'tiltCircumference should be computed correctly', ->
-    sphere.tiltCircumference.should.be.equal(fullSphereCamera.tiltMax)
+  it 'tiltArc should be computed correctly', ->
+    sphere.tiltArc.should.be.equal(fullSphereCamera.tiltMax)
   
   it 'countRows should be computed correctly', ->
     sphere.countRows.should.be.equal(10)
@@ -41,7 +41,7 @@ describe 'SphereRow', ->
         row.circumference.should.be.equal(0)
       else
         row.circumference.should.be.equal(
-          Math.abs(Math.sin(row.tilt))*sphere.panCircumference
+          Math.abs(Math.sin(row.tilt))*sphere.panArc
         )
   
   it 'countCols should be computed correctly', ->
@@ -56,7 +56,7 @@ describe 'SphereRow', ->
         row.deltaPan.should.be.equal(0)
       else
         row.deltaPan.should.be.equal(
-          sphere.panCircumference/row.countCols
+          sphere.panArc/row.countCols
         )
   
   it 'cols should contain correct number of elements', ->
