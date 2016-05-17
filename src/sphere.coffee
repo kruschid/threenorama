@@ -10,7 +10,7 @@ class Sphere
   # @var {Number} tilMin tilt arc start point in radians
   # @var {Number} tilMax tilt arc end point in radians
   # @var {Number} panArc panMin to panMax length in radians
-  # @var {Number} tiltArc tilMin to tiltMax length in radians
+  # @var {Number} tiltArc panMin to panMax length in radians
   
   ###*
   # Constructor-Description
@@ -28,11 +28,11 @@ class Sphere
     # compute horizontal circumference
     @panArc = @panMax - @panMin
     # computrtical circumference
-    @tiltArc iltMax - @tiltMin
-    # count picture-rows  @countRows = Math.ceil(@tiltArc/@pictureSizeght)
+    @tiltArc = @tiltMax - @tiltMin
+    # count picture-rows  @countRows = Math.ceil(@tiltArc/@pictureSize.height)
     # compute delta  @deltaTilt = @tiltArc/@countRows
     # create rows
-@rows = []
+    @rows = []
     for i in [0..@countRows]
       tilt = @tiltMin + i*@deltaTilt
       # create SphereRow
