@@ -6,13 +6,8 @@ module.exports = (config) ->
     preprocessors:
       'test/index.js': ['webpack', 'sourcemap']
 
-  
-    webpack: 
-      devtool: 'inline-source-map'
-      module:
-        loaders: [
-          {test: /\.coffee$/, loader: "coffee"}
-        ]
+    # import webpack config
+    webpack: require('../webpack.config.js')
     
     # frameworks to use
     frameworks: ['mocha', 'chai']

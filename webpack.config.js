@@ -2,6 +2,7 @@ var path = require('path'),
     HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  devtool: 'inline-source-map',
   devServer: {
     historyApiFallback: true,
     hot: true,
@@ -14,7 +15,7 @@ module.exports = {
   entry: "./src/app.coffee",
   output: {
     path: path.resolve(__dirname, "build"),
-    // publicPath: "/assets/",
+    publicPath: "/",
     filename: "assets/bundle.js"
   },
   module: {
