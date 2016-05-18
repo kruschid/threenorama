@@ -4,7 +4,7 @@ chai.should()
 
 fullSphereCamera =
   panMin: 0         # 0°
-  panMax: 2*Math.PI # 306°
+  panMax: 2*Math.PI # 360°
   tiltMin: 0        # 0°
   tiltMax: Math.PI  # 180°
 pictureSize =
@@ -42,7 +42,9 @@ describe 'Sphere', ->
     sphere.deltaTilt.should.be.equal(sphere.tiltArc/9)
   
   it 'rows should have correct number of elements', ->
-    sphere.rows.length.should.be.equal(sphere.countDeltaTilt)
+    sphere.rows.length.should.be.equal(
+      sphere.countDeltaTilt+1
+    )
   
   it 'rows should only contain SphereRow instances', ->
     for row in sphere.rows

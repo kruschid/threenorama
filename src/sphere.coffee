@@ -41,7 +41,7 @@ module.exports.Sphere = class Sphere
     @deltaTilt = @tiltArc/@countDeltaTilt
     # create rows
     @rows = []
-    for i in [0..@countDeltaTilt-1]
+    for i in [0..@countDeltaTilt]
       tilt = @tiltMin + i*@deltaTilt
       # create SphereRow
       @rows.push(new SphereRow(@, tilt))
