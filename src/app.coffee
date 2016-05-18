@@ -1,15 +1,16 @@
-threenorama = require('./sphere.coffee')
+SphereSegment = require('./components/sphereSegment/SphereSegment.coffee')
 fabric = require('../bower_components/fabric.js/dist/fabric.require.js')
 
-fullSphereCamera =
-  panMin: 0         # 0°
-  panMax: 2*Math.PI # 306°
-  tiltMin: 0        # 0°
-  tiltMax: Math.PI  # 180°
+panSegment =
+  min: 1.5*Math.PI   # 0°
+  max: 2*Math.PI # 306°
+tiltSegment =
+  min: 0 # 90°
+  max: Math.PI  # 180°
 pictureSize =
   pan: Math.PI/4    # 45° =>  8*45° = 360°
   tilt: Math.PI/10  # 18° => 10*18° = 180° 
-sphere = new threenorama.Sphere(fullSphereCamera, pictureSize)
+sphere = new SphereSegment(tiltSegment, panSegment, pictureSize)
 canvas = new fabric.StaticCanvas('c')
 canvas.setHeight(600)
       .setWidth(1400)
@@ -26,7 +27,7 @@ for row, i in sphere.rows
       originY: 'center'
       left: panToCanvas(col.pan)
       top: tiltToCanvas(col.tilt)
-      height: tiltToCanvas(sphere.pictureSize.tilt)
+      height: tiltToCanvas(row.pictureSize.tilt)
       # width: panToCanvas(pictureSize.pan*2*Math.PI/row.panArc)
       width: panToCanvas(row.pictureSize.pan)
       fill: 'red'
