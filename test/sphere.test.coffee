@@ -8,25 +8,41 @@ fullSphereCamera =
   tiltMin: 0        # 0°
   tiltMax: Math.PI  # 180°
 pictureSize =
-  width: Math.PI/4    # 45° =>  8*45° = 360°
-  height: Math.PI/10  # 18° => 10*18° = 180° 
+  pan: Math.PI/4    # 45° =>  8*45° = 360°
+  tilt: Math.PI/10  # 18° => 10*18° = 180° 
 sphere = new threenorama.Sphere(fullSphereCamera, pictureSize)
 
-describe 'Sphere', ->    
+describe 'Sphere', -> 
+  it 'tiltMin should be computed correctly', ->
+    sphere.tiltMin.should.be.equal(
+      fullSphereCamera.tiltMin+pictureSize.tilt/2
+    )
+    
+  it 'tiltMax should be computed correctly', ->   
+    sphere.tiltMax.should.be.equal(
+      fullSphereCamera.tiltMax-pictureSize.tilt/2
+    )
+    
   it 'panArc should be computed correctly', ->
-    sphere.panArc.should.be.equal(fullSphereCamera.panMax)
+    sphere.panArc.should.be.approximately(
+      fullSphereCamera.panMax-pictureSize.pan
+      0.00000000001
+    )
   
   it 'tiltArc should be computed correctly', ->
-    sphere.tiltArc.should.be.equal(fullSphereCamera.tiltMax)
+    sphere.tiltArc.should.be.equal(
+      fullSphereCamera.tiltMax-pictureSize.tilt
+    )
   
-  it 'countRows should be computed correctly', ->
-    sphere.countRows.should.be.equal(10)
+  it 'countDeltaTilt should be computed correctly', ->
+    # because the algorithm doesn't cover top and bottom of sphere we lose here one line 
+    sphere.countDeltaTilt.should.be.equal(9) 
   
   it 'deltaTilt should be computed correctly', ->
-    sphere.deltaTilt.should.be.equal(Math.PI/10)
+    sphere.deltaTilt.should.be.equal(sphere.tiltArc/9)
   
   it 'rows should have correct number of elements', ->
-    sphere.rows.length.should.be.equal(11)
+    sphere.rows.length.should.be.equal(sphere.countDeltaTilt)
   
   it 'rows should only contain SphereRow instances', ->
     for row in sphere.rows
@@ -34,22 +50,21 @@ describe 'Sphere', ->
   
   it 'each row should have correct tilt', ->
     for row, i in sphere.rows
-      row.tilt.should.be.equal(i*Math.PI/10)
+      row.tilt.should.be.equal(
+        sphere.tiltMin + i*sphere.deltaTilt
+      )
 
 describe 'SphereRow', ->
-  it 'circumfence should be computed correctly', ->
+  it 'panArc should be computed correctly', ->
     for row in sphere.rows
-      if row.tilt <= 0 or row.tilt >= Math.PI
-        row.circumference.should.be.equal(0)
-      else
-        row.circumference.should.be.equal(
-          Math.abs(Math.sin(row.tilt))*sphere.panArc
-        )
+      row.panArc.should.be.equal(
+        Math.abs(Math.sin(row.tilt))*sphere.panArc
+      )
   
-  it 'countCols should be computed correctly', ->
+  it 'countDeltaPan should be computed correctly', ->
     for row in sphere.rows
-      row.countCols.should.be.equal(
-        Math.ceil(row.circumference/sphere.pictureSize.width)
+      row.countDeltaPan.should.be.equal(
+        Math.ceil(row.panArc/sphere.pictureSize.pan)
       )
   
   it 'deltaPan should be computed correctly', ->
@@ -58,13 +73,13 @@ describe 'SphereRow', ->
         row.deltaPan.should.be.equal(0)
       else
         row.deltaPan.should.be.equal(
-          sphere.panArc/row.countCols
+          sphere.panArc/row.countDeltaPan
         )
-  
+        
   it 'cols should contain correct number of elements', ->
     for row in sphere.rows
       row.cols.length.should.be.equal(
-        row.countCols+1
+        row.countDeltaPan+1
       )
 
   it 'cols should only contain SphereCol instances', ->
@@ -75,7 +90,9 @@ describe 'SphereRow', ->
   it 'each col should have correct tilt', ->
     for row, k in sphere.rows
       for col in row.cols
-        col.tilt.should.be.equal(k*Math.PI/10)
+        col.tilt.should.be.equal(
+          sphere.tiltMin + k*sphere.deltaTilt
+        )
   
   it 'each col should have correct pan', ->
     for row in sphere.rows
@@ -83,9 +100,3 @@ describe 'SphereRow', ->
         col.pan.should.be.equal(
           sphere.panMin + i*row.deltaPan
         )
-  
-  it 'each col should have correct pictureSize', ->
-    for row in sphere.rows
-      for col in row.cols
-        col.pictureSize.width.should.be.equal(sphere.pictureSize.width)
-        col.pictureSize.height.should.be.equal(sphere.pictureSize.height)

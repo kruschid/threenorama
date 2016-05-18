@@ -25,17 +25,23 @@ module.exports.Sphere = class Sphere
       @tiltMin
       @tiltMax
     } = cameraType
-    # compute horizontal circumference
+    # pan should have at least distance of half picture-width to pan-origin (0°/360°) not to cover area at borders twice
+    @panMin = Math.max(@panMin, @pictureSize.pan/2)
+    @panMax = Math.min(@panMax, 2*Math.PI - @pictureSize.pan/2)
+    # tilt should have at least distance of half height of picture to both bottom an top of sphere not to cover area twice at the borders
+    @tiltMin = Math.max(@tiltMin, @pictureSize.tilt/2)
+    @tiltMax = Math.min(@tiltMax, Math.PI - @pictureSize.tilt/2)
+    # compute horizontal arc length 
     @panArc = @panMax - @panMin
-    # compute vertical circumference
+    # compute vertical arc length
     @tiltArc = @tiltMax - @tiltMin
     # count picture-rows 
-    @countRows = Math.ceil(@tiltArc/@pictureSize.height)
+    @countDeltaTilt = Math.ceil(@tiltArc/@pictureSize.tilt)
     # compute delta 
-    @deltaTilt = @tiltArc/@countRows
+    @deltaTilt = @tiltArc/@countDeltaTilt
     # create rows
     @rows = []
-    for i in [0..@countRows]
+    for i in [0..@countDeltaTilt-1]
       tilt = @tiltMin + i*@deltaTilt
       # create SphereRow
       @rows.push(new SphereRow(@, tilt))
@@ -50,26 +56,18 @@ module.exports.SphereRow =class SphereRow
   # Constructor-Description
   # @param {PTZCameraType} cameraType
   # @param {Number} tilt camera tilt in radians
-  # @param {Object} pictureSize width/height in radians
+  # @param {Object} pictureSize width/tilt in radians
   ###
   constructor: (@sphere, @tilt) ->
     # if top or bottom of sphere 
-    if @tilt <= 0 or @tilt >= Math.PI
-      @circumference = 0
-      @countCols = 0
-      @deltaPan = 0
-      @cols = [
-        new SphereCol(@tilt, 0, @sphere.pictureSize)
-      ]
-    else
-      @circumference = Math.abs(Math.sin(@tilt))*@sphere.panArc
-      @countCols = Math.ceil(@circumference/@sphere.pictureSize.width) 
-      @deltaPan = @sphere.panArc/@countCols
-      # generate cols
-      @cols = []
-      for i in [0..@countCols]
-        pan = @sphere.panMin + i*@deltaPan
-        @cols.push(new SphereCol(@tilt, pan, @sphere.pictureSize))
+    @panArc = Math.abs(Math.sin(@tilt))*@sphere.panArc
+    @countDeltaPan = Math.ceil(@panArc/@sphere.pictureSize.pan) 
+    @deltaPan = @sphere.panArc/@countDeltaPan
+    # generate cols
+    @cols = []
+    for i in [0..@countDeltaPan]
+      pan = @sphere.panMin + i*@deltaPan
+      @cols.push(new SphereCol(@tilt, pan))
 
 ###*
 # one cell in a sphere
@@ -80,4 +78,4 @@ module.exports.SphereCol = class SphereCol
   ###*
   # Constructor-Description
   ###
-  constructor: (@tilt, @pan, @pictureSize) ->
+  constructor: (@tilt, @pan) ->
