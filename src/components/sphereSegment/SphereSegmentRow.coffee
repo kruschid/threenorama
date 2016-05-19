@@ -12,24 +12,30 @@ module.exports = class SphereSegmentRow
   # @param {Number} tilt camera tilt in radians
   # @param {Object} pictureSize width/tilt in radians
   ###
-  constructor: (@tilt, panSegment, pictureSize) ->    
+  constructor: (@tilt, panSegment, pictureSize) ->
     # upwards the upper halfsphere and downwards the lower panArc decreases
-    # in this relationsship we have to adjust pan to keep ansure right aspect ratio    
+    # in this relationsship we have to adjust image width to keep ansure right aspect ratio    
     @pictureSize =
       tilt: pictureSize.tilt
       pan: pictureSize.pan/Math.sin(@tilt) 
-    # the camera points to center of a picture
-    # to cover only the desired area with pictures we have to redurce panArc by half of picture-tilt
-    @panMin = panSegment.min + @pictureSize.pan/2
-    @panMax = panSegment.max - @pictureSize.pan/2
-    @panArc = @panMax - @panMin
-    @countDeltaPan = Math.ceil(@panArc/@pictureSize.pan)
-    # ensure horizontal overlapping of 50%
-    @deltaPan = @panArc/@countDeltaPan
-    while 0.5 > @pictureSize.pan-@deltaPan
-      @deltaPan = @panArc/++@countDeltaPan
-    # generate cols
-    @cols = []
-    for i in [0..@countDeltaPan]
-      pan = @panMin + i*@deltaPan
-      @cols.push(new SphereSegmentCol(@tilt, pan))
+    @panArc = panSegment.max-panSegment.min # = segment width
+    # if row could be covered by single image
+    if @panArc < @pictureSize.pan
+      @cols = [new SphereSegmentCol(
+        @tilt
+        panSegment.min + @panArc/2
+      )]
+    # if one image isnt enough to cover row
+    else
+      # the camera points to center of a picture
+      # to cover only the desired area with pictures we have to redurce panArc by picture-pan (width) 
+      @panArc -=  @pictureSize.pan
+      @panStart = panSegment.min + @pictureSize.pan/2
+      # count cols regarding 50% overlapping
+      @countDeltaPan = Math.ceil(@panArc/(@pictureSize.pan/2))
+      @deltaPan = @panArc/@countDeltaPan
+      # generate cols
+      @cols = []
+      for i in [0..@countDeltaPan]
+        pan = @panStart + i*@deltaPan
+        @cols.push(new SphereSegmentCol(@tilt, pan))

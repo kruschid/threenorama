@@ -27,23 +27,22 @@ module.exports = class SphereSegment
   # @param {Number} pictureSize.pan
   ###
   constructor: (tiltSegment, panSegment, pictureSize) ->
-    # compute length of tiltArc
-    @tiltArc = tiltSegment.max-tiltSegment.min
+    # checks if height of segment could be covered by a single picture
+    @tiltArc = tiltSegment.max-tiltSegment.min # = segment height
     if @tiltArc < pictureSize.tilt
       @rows = [new SphereSegmentRow(
-        @tiltArc/2
+        tiltSegment.min + @tiltArc/2
         panSegment
         pictureSize
       )]
+    # one picture isnt't enough to cover segment height
     else
       # the camera points to center of a picture
-      # to cover only the desired area with pictures we have to redurce tiltArc by picture-tilt 
+      # to cover only the desired area with pictures we have to redurce tiltArc by picture.tilt (height) 
       @tiltArc -= pictureSize.tilt
-      @tiltStart = tiltSegment.min+pictureSize.tilt/2
+      @tiltStart = tiltSegment.min + pictureSize.tilt/2
       # count picture-rows regarding 50% overlapping
-      # @countDeltaTilt = Math.ceil(@tiltArc/pictureSize.tilt)*2-1
       @countDeltaTilt = Math.ceil(@tiltArc/(pictureSize.tilt/2))
-      #@countDeltaTilt = Math.round(@tiltArc/(pictureSize.tilt/2))
       # compute delta 
       @deltaTilt = @tiltArc/@countDeltaTilt
       # create rows
