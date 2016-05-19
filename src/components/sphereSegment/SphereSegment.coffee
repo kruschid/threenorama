@@ -27,19 +27,28 @@ module.exports = class SphereSegment
   # @param {Number} pictureSize.pan
   ###
   constructor: (tiltSegment, panSegment, pictureSize) ->
-    # the camera points to center of a picture
-    # to cover only the desired area with pictures we have to redurce tiltArc by half of picture-tilt 
-    @tiltMin = tiltSegment.min+pictureSize.tilt/2
-    @tiltMax = tiltSegment.max-pictureSize.tilt/2
     # compute length of tiltArc
-    @tiltArc = @tiltMax - @tiltMin
-    # count picture-rows regarding 50% overlapping
-    @countDeltaTilt = Math.ceil(@tiltArc/pictureSize.tilt)*2 - 1
-    # compute delta 
-    @deltaTilt = @tiltArc/@countDeltaTilt
-    # create rows
-    @rows = []
-    for i in [0..@countDeltaTilt]
-      tilt = @tiltMin + i*@deltaTilt
-      # create SphereSegmentRow
-      @rows.push(new SphereSegmentRow(tilt, panSegment, pictureSize))
+    @tiltArc = tiltSegment.max-tiltSegment.min
+    if @tiltArc < pictureSize.tilt
+      @rows = [new SphereSegmentRow(
+        @tiltArc/2
+        panSegment
+        pictureSize
+      )]
+    else
+      # the camera points to center of a picture
+      # to cover only the desired area with pictures we have to redurce tiltArc by picture-tilt 
+      @tiltArc -= pictureSize.tilt
+      @tiltStart = tiltSegment.min+pictureSize.tilt/2
+      # count picture-rows regarding 50% overlapping
+      # @countDeltaTilt = Math.ceil(@tiltArc/pictureSize.tilt)*2-1
+      @countDeltaTilt = Math.ceil(@tiltArc/(pictureSize.tilt/2))
+      #@countDeltaTilt = Math.round(@tiltArc/(pictureSize.tilt/2))
+      # compute delta 
+      @deltaTilt = @tiltArc/@countDeltaTilt
+      # create rows
+      @rows = []
+      for i in [0..@countDeltaTilt]
+        tilt = @tiltStart + i*@deltaTilt
+        # create SphereSegmentRow
+        @rows.push(new SphereSegmentRow(tilt, panSegment, pictureSize))
