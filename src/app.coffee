@@ -1,9 +1,11 @@
 SphereSegment = require('./components/sphereSegment/SphereSegment.coffee')
 fabric = require('../bower_components/fabric.js/dist/fabric.require.js')
+THREE = require("three-js")()
 
 canvas = new fabric.Canvas('c')
-canvas.setHeight(600)
-      .setWidth(1200)
+canvas.setHeight(512)
+      .setWidth(1024)
+      .setBackgroundColor('white')
 
 rectList = []
 
@@ -15,13 +17,13 @@ tiltSegment =
   max: Math.PI/2  # 180°
 pictureSize =
   pan: Math.PI/4    # 45° =>  8*45° = 360°
-  tilt: Math.PI/13.5  # 18° => 10*18° = 180° 
+  tilt: Math.PI/8  # 18° => 10*18° = 180° 
   
 selection = new fabric.Rect
-  left: 0
-  top: 0
-  height: 100
-  width: 100
+  left: 250
+  top: 125
+  height: 250
+  width: 500
   fill: 'transparent'
   stroke: 'red'
   # centeredScaling: true
@@ -52,7 +54,7 @@ selection.on 'modified', ->
   console.log panSegment, tiltSegment
   renderSphereSegment()
   @bringToFront()
-
+  
 renderSphereSegment = ->
   sphere = new SphereSegment(tiltSegment, panSegment, pictureSize)
   console.log 'picture tilt', pictureSize.tilt
@@ -77,3 +79,42 @@ renderSphereSegment = ->
         opacity: 0.25
       rectList.push(rect)
       canvas.add(rect)
+
+##
+## THREE
+## 
+scene = new THREE.Scene()
+camera = new THREE.PerspectiveCamera(70, 1200/600, 0.1, 1000)
+
+renderer = new THREE.WebGLRenderer()
+renderer.setSize(1200, 600)
+document.body.appendChild(renderer.domElement)
+
+# light
+light = new THREE.PointLight(0xffffff)
+light.position.set(0,250,0)
+scene.add(light)
+  
+##
+radius = 100
+segments = 16
+rings = 16
+geometry = new THREE.SphereGeometry(radius, segments, rings)
+texture = new THREE.CanvasTexture(document.getElementById('c'))
+material = new THREE.MeshBasicMaterial
+  map: texture
+  side: THREE.BackSide
+  
+sphere = new THREE.Mesh(geometry, material)
+scene.add(sphere)
+
+# console.log canvas.lowerCanvasEl
+# camera.position.z = 5
+
+render = ->
+  requestAnimationFrame( render )
+  texture.needsUpdate = true
+  # camera.rotation.y += 0.01
+  renderer.render( scene, camera )
+
+render()
