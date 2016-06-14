@@ -57,12 +57,21 @@ class SpherePictureFactory
   ###
   _createCols: (row, tilt) ->
     # upwards the upper halfsphere and downwards the lower panArc decreases
-    # in this relationsship we have to adjust image width to keep ansure right aspect ratio    
+    # in this relationsship we have to adjust image width to keep ansure right aspect ratio
     pictureWidth = @recorderJob.pictureWidth/Math.sin(tilt)
-    panArc = @recorderJob.panMax-@recorderJob.panMin # = segment width
+    panArc = @recorderJob.panMax-@recorderJob.panMin # = segment length
+    # limit pictureWidth to 360°
+    pictureWidth = Math.min(pictureWidth, 2*Math.PI)
     # if row could be covered by single image
     if panArc < pictureWidth
-      @pictures.push( new SpherePicture(0, row, @recorderJob.panMin+panArc/2, tilt) )
+      @pictures.push( new SpherePicture(
+        0
+        row
+        @recorderJob.panMin+panArc/2
+        tilt
+        pictureWidth
+        @recorderJob.pictureHeight
+      ))
     # if one image isnt enough to cover row
     else
       # the camera points to center of a picture
@@ -74,7 +83,14 @@ class SpherePictureFactory
       deltaPan = panArc/countCols
       # generate cols
       for i in [0..countCols]
-        @pictures.push( new SpherePicture(i, row, panStart + i*deltaPan, tilt) )
+        @pictures.push( new SpherePicture(
+          i
+          row
+          panStart + i*deltaPan
+          tilt
+          pictureWidth
+          @recorderJob.pictureHeight
+        ))
 
 ###*
 # Description
@@ -91,21 +107,31 @@ class SpherePicture
   ###
   
   ###*
+  # @var {Number} pan
+  ###
+  
+  ###*
   # @var {Number} tilt
   ###
   
   ###*
-  # @var {Number} pan
+  # @var {Number} width
+  ###
+
+  ###*
+  # @var {Number} height
   ###
   
   ###*
   # Constructor-Description
   # @var {Number} x
   # @var {Number} y
-  # @var {Number} tilt
   # @var {Number} pan
+  # @var {Number} tilt
+  # @var {Number} width
+  # @var {Number} height
   ###
-  constructor: (@x, @y, @tilt, @pan) ->
+  constructor: (@x, @y, @pan, @tilt, @width, @height) ->
   
 ###*
 # exporting 
