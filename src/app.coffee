@@ -1,23 +1,16 @@
-SphereSegment = require('./components/sphereSegment/SphereSegment.coffee')
-fabric = require('../bower_components/fabric.js/dist/fabric.require.js')
+SpherePictureFactory = require('./components/SpherePictureFactory.coffee').SpherePictureFactory
+Canvas = require('./components/Canvas.coffee')
+fabric = require('fabric').fabric
 THREE = require("three-js")()
 
-canvas = new fabric.Canvas('c')
+pictureSize =
+  width: Math.PI/3
+  height: Math.PI/4
+
+canvas = new Canvas('c')
 canvas.setHeight(512)
       .setWidth(1024)
       .setBackgroundColor('white')
-
-rectList = []
-
-panSegment =
-  min: Math.PI  # 0°
-  max: 2*Math.PI    # 360°
-tiltSegment =
-  min: 0 # 90°
-  max: Math.PI/2  # 180°
-pictureSize =
-  pan: Math.PI/4    # 45° =>  8*45° = 360°
-  tilt: Math.PI/8  # 18° => 10*18° = 180° 
   
 selection = new fabric.Rect
   left: 250
@@ -34,60 +27,46 @@ selection = new fabric.Rect
 
 canvas.add(selection)
 
-tiltToCanvas = (tilt) ->
-  tilt/Math.PI*canvas.height
-panToCanvas= (pan) ->
-  pan/Math.PI/2*canvas.width
-canvasToTilt = (top) -> 
-  top/canvas.height*Math.PI
-canvasToPan = (left) ->
-  left/canvas.width*Math.PI*2
-  
+rectList = []
 selection.on 'modified', ->
+  # remove all rects
   canvas.remove(rectList.pop()) while rectList.length
-  panSegment = 
-    min: canvasToPan(@left)
-    max: canvasToPan(@left+@width*@scaleX)
-  tiltSegment = 
-    min: canvasToTilt(@top)
-    max: canvasToTilt(@top+@height*@scaleY)
-  console.log panSegment, tiltSegment
-  renderSphereSegment()
+  # define recorderjob
+  sphere = new SpherePictureFactory
+    tiltMin: canvas.toTilt(@top)
+    tiltMax: canvas.toTilt(@top+@height*@scaleY)
+    panMin: canvas.toPan(@left)
+    panMax: canvas.toPan(@left+@width*@scaleX)
+    pictureWidth: pictureSize.width
+    pictureHeight: pictureSize.height
+  # create rects
+  console.log  sphere
+  for pic in sphere.pictures
+    rectList.push new fabric.Rect
+      hasControls: false
+      selectable: false
+      originX: 'center'
+      originY: 'center'
+      left: canvas.fromPan(pic.pan)
+      top: canvas.fromTilt(pic.tilt)
+      width: canvas.fromPan(pic.width)
+      height: canvas.fromTilt(pic.height)
+      fill: 'red'
+      stroke: 'grey'
+      opacity: 0.25
+  # bring selection to front
+  canvas.add.apply(canvas, rectList)
   @bringToFront()
   
-renderSphereSegment = ->
-  sphere = new SphereSegment(tiltSegment, panSegment, pictureSize)
-  console.log 'picture tilt', pictureSize.tilt
-  console.log 'deltaTilt', sphere.deltaTilt
-  console.log 'überlappung', (pictureSize.tilt-sphere.deltaTilt)/pictureSize.tilt
-  console.log 'rows', sphere.rows.length
-  console.log 'countDeltaTilt', sphere.countDeltaTilt
-  for row, i in sphere.rows
-    for col in row.cols
-      rect = new fabric.Rect
-        hasControls: false
-        selectable: false
-        originX: 'center'
-        originY: 'center'
-        left: panToCanvas(col.pan)
-        top: tiltToCanvas(col.tilt)
-        height: tiltToCanvas(row.pictureSize.tilt)
-        # width: panToCanvas(pictureSize.pan*2*Math.PI/row.panArc)
-        width: panToCanvas(row.pictureSize.pan)
-        fill: 'red'
-        stroke: 'grey'
-        opacity: 0.25
-      rectList.push(rect)
-      canvas.add(rect)
 
 ##
 ## THREE
 ## 
 scene = new THREE.Scene()
-camera = new THREE.PerspectiveCamera(70, 1200/600, 0.1, 1000)
+camera = new THREE.PerspectiveCamera(100, 1024/512, 0.1, 1000)
 
 renderer = new THREE.WebGLRenderer()
-renderer.setSize(1200, 600)
+renderer.setSize(1024, 512)
 document.body.appendChild(renderer.domElement)
 
 # light
@@ -97,10 +76,10 @@ scene.add(light)
   
 ##
 radius = 100
-segments = 16
-rings = 16
+segments = 32
+rings = 32
 geometry = new THREE.SphereGeometry(radius, segments, rings)
-texture = new THREE.CanvasTexture(document.getElementById('c'))
+texture = new THREE.CanvasTexture(canvas.getElement())
 material = new THREE.MeshBasicMaterial
   map: texture
   side: THREE.BackSide
@@ -114,7 +93,8 @@ scene.add(sphere)
 render = ->
   requestAnimationFrame( render )
   texture.needsUpdate = true
-  # camera.rotation.y += 0.01
+  camera.rotation.y += 0.01
+  # camera.rotation.x += 0.01
   renderer.render( scene, camera )
 
 render()

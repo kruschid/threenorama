@@ -41,6 +41,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "fabric": "^1.6.2",
     "three-js": "^76.0.2"
   }
 }
