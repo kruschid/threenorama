@@ -75,7 +75,7 @@ describe 'SpherePictureFactory', ->
       # first picture and last picture
       pictures[0].width.should.be.equal(2*Math.PI)
       
-    it 'should have overlapping of 50%', ->
+    it 'should have overlapping of 50% and cover area defined by recorderjob', ->
       # fullspehre recorderjob
       rj =
         tiltMin: 0
@@ -85,15 +85,61 @@ describe 'SpherePictureFactory', ->
         pictureWidth: Math.PI/4
         pictureHeight: Math.PI/10
       pictures = new SpherePictureFactory(rj).pictures
-      lastPic = undefined
+      prevPic = tiltMin = tiltMax = panMin = panMax = undefined
+      # check for vertical bounds for all rows
+      checkTilt = ->
+        tiltMin.should.be.at.most(rj.tiltMin)
+        tiltMax.should.be.at.least(rj.tiltMax)
+      # check horizontal bounds for each row
+      checkPan = ->
+        panMin.should.be.at.most(rj.panMin)
+        # because we divide width of picture to estimate panMax 
+        # it is possible that panMax is smalelr than recorderjob defined
+        # in this case its sufficient to test with closeTo operator
+        if panMax < rj.panMax
+          panMax.should.be.closeTo(rj.panMax, 0.00000000000001)
+        else
+          panMax.should.be.at.least(rj.panMax)
+        
       for pic in pictures
         # same row
-        if lastPic?.y is pic.y
+        if prevPic and pic.y is prevPic.y
+          # ensure pic is in same row 
+          pic.tilt.should.be.equal(prevPic.tilt)
           # should at least cover 50% of prevoius picture horizontally
-          pic.pan.should.be.at.most(lastPic.pan+pic.width/2)
+          pic.pan.should.be.at.most(prevPic.pan+prevPic.width/2)
         # next row
-        else if lastPic?.y < pic.y
+        else if prevPic and pic.y > prevPic.y
+          # ensure no row is leaved out
+          pic.y.should.be.equal(prevPic.y+1) 
           # should at least cover 50% of prevoius picture vertically
-          pic.tilt.should.be.at.most(lastPic.tilt+pic.height/2)
+          pic.tilt.should.be.at.most(prevPic.tilt+prevPic.height/2)
+          # check pan and reset
+          checkPan()
+          panMin = panMax = undefined
+        #
+        # update horizontal bounds
+        if typeof panMin is 'number' 
+          panMin = Math.min(panMin, pic.pan-pic.width/2) 
+        else 
+          panMin = pic.pan-pic.width/2
+        if typeof panMax is 'number'
+          panMax = Math.max(panMax, pic.pan+pic.width/2) 
+        else
+          panMax = pic.pan+pic.width/2
+        #
+        # update vertical bounds
+        if typeof tiltMin is 'number'
+          tiltMin = Math.min(tiltMin, pic.tilt-pic.height/2) 
+        else 
+          tiltMin = pic.tilt-pic.height/2
+        if typeof tiltMax is 'number'
+          tiltMax = Math.max(tiltMax, pic.tilt+pic.height/2)
+        else 
+          tiltMax = pic.tilt+pic.height/2
+        #
         # remember curr pic for next iteration
-        lastPic = pic
+        prevPic = pic
+      # last row
+      checkPan()
+      checkTilt()
